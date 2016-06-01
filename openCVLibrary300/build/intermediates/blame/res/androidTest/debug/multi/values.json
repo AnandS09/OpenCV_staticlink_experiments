@@ -1,5 +1,9 @@
 [
     {
+        "outputFile": "C:\\Users\\asamajda\\AndroidStudioProjects\\OpenCV_staticlink_experiments\\openCVLibrary300\\build\\intermediates\\res\\merged\\androidTest\\debug\\values\\values.xml",
+        "map": []
+    },
+    {
         "outputFile": "D:\\Code\\OpenCV_staticlink_experiments\\openCVLibrary300\\build\\intermediates\\res\\merged\\androidTest\\debug\\values\\values.xml",
         "map": []
     }
