@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     protected enum button_id {ORIGINAL, NEXT};
     public Mat readImage;
     public ImageView imageView;
+    private boolean flag;                       //True --> Grayscale; False--> original
 
 
     @Override
@@ -35,36 +36,43 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        read_image();
+        // Get handle to the UI components
         imageView = (ImageView) findViewById(R.id.imageView);
+
+        // Read the image and display a placeholder
+        read_image();
+        flag = false;
         //for now just draw the original image
         drawImage(button_id.ORIGINAL);
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
     }
 
     public void read_image(){
-        String im_name = "spectrum.jpg";
-
-        File imgfile = new File(im_name);
-        readImage = Imgcodecs.imread(imgfile.getAbsolutePath());
+        try {
+            // Source : http://stackoverflow.com/questions/20184215/how-to-get-mat-with-a-drawable-input-in-android-using-opencv
+            readImage = Utils.loadResource(this.getApplicationContext(), R.drawable.spectrum, Imgcodecs.CV_LOAD_IMAGE_COLOR);
+        } catch( Exception e){
+            e.printStackTrace();
+        }
     }
     public void drawImage(button_id id){
+        read_image();
         Mat displayImage = readImage;
 
         if(id == button_id.ORIGINAL){
-            //do nothing for now. This is just a placeholder
+            //Show the original image
+            displayImage = readImage;
+            flag = false;
         }
         else if (id == button_id.NEXT){
-            //for now just display greyscale
-            Imgproc.cvtColor(readImage,displayImage,Imgproc.COLOR_RGB2GRAY,4);
+            //for now just display grayscale or toggle
+            if(!flag) {
+                Imgproc.cvtColor(readImage, displayImage, Imgproc.COLOR_RGB2GRAY, 4);
+                flag = true;
+            }
+            else {
+                displayImage = readImage;
+                flag = false;
+            }
         }
 
         //Change it to bitmap
@@ -72,10 +80,8 @@ public class MainActivity extends AppCompatActivity {
         Bitmap bmp = null;
         //Mat tmp = new Mat (height, width, CvType.CV_8U, new Scalar(4));
         try {
-            //Imgproc.cvtColor(seedsImage, tmp, Imgproc.COLOR_RGB2BGRA);
-            //Imgproc.cvtColor(seedsImage, tmp, Imgproc.COLOR_GRAY2RGBA, 4);
-            bmp = Bitmap.createBitmap(readImage.cols(), readImage.rows(), Bitmap.Config.ARGB_8888);
-            Utils.matToBitmap(readImage, bmp);
+            bmp = Bitmap.createBitmap(displayImage.cols(), displayImage.rows(), Bitmap.Config.ARGB_8888);
+            Utils.matToBitmap(displayImage, bmp);
         }
         catch (CvException e){
             Log.d("Exception", e.getMessage());
