@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             bmp = Bitmap.createBitmap(displayImage.cols(), displayImage.rows(), Bitmap.Config.ARGB_8888);
             Utils.matToBitmap(displayImage, bmp);
+            //Made some changes
         }
         catch (CvException e){
             Log.d("Exception", e.getMessage());
